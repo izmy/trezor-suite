@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
-import { TOOLTIP_DELAY_NORMAL, Tooltip, motionEasing } from '@trezor/components';
-import { motion, AnimatePresence, MotionProps } from 'framer-motion';
-import { borders, spacingsPx } from '@trezor/theme';
 import { selectDevice } from '@suite-common/wallet-core';
+import { TOOLTIP_DELAY_NORMAL, Tooltip, motionEasing } from '@trezor/components';
+import { borders, spacingsPx } from '@trezor/theme';
+import { AnimatePresence, type MotionProps, motion } from 'framer-motion';
 
-import { useSelector, useAccountSearch } from 'src/hooks/suite';
+import { networkSymbolList } from '@suite-common/wallet-config';
 import { CoinLogo } from '@trezor/product-components';
+import { useAccountSearch, useSelector } from 'src/hooks/suite';
 
 // eslint-disable-next-line local-rules/no-override-ds-component
 const StyledCoinLogo = styled(CoinLogo)<{ $isSelected?: boolean }>`
@@ -46,7 +47,9 @@ export const CoinsFilter = () => {
     const device = useSelector(selectDevice);
 
     const unavailableCapabilities = device?.unavailableCapabilities ?? {};
-    const supportedNetworks = enabledNetworks.filter(symbol => !unavailableCapabilities[symbol]);
+    const supportedNetworks = enabledNetworks
+        .filter(symbol => !unavailableCapabilities[symbol])
+        .sort((a, b) => networkSymbolList.indexOf(a) - networkSymbolList.indexOf(b));
 
     const showCoinFilter = supportedNetworks.length > 1;
 
